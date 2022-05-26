@@ -15,6 +15,8 @@
 #include "game/object_list_processor.h"
 #include "surface_load.h"
 
+#include "game/hitbox_hack.h"
+
 s32 unused8038BE90;
 
 /**
@@ -29,9 +31,9 @@ SpatialPartitionCell gDynamicSurfacePartition[NUM_CELLS][NUM_CELLS];
  */
 #ifdef USE_SYSTEM_MALLOC
 static struct AllocOnlyPool *sStaticSurfaceNodePool;
-static struct AllocOnlyPool *sStaticSurfacePool;
+struct AllocOnlyPool *sStaticSurfacePool;
 static struct AllocOnlyPool *sDynamicSurfaceNodePool;
-static struct AllocOnlyPool *sDynamicSurfacePool;
+struct AllocOnlyPool *sDynamicSurfacePool;
 static u8 sStaticSurfaceLoadComplete;
 #else
 struct SurfaceNode *sSurfaceNodePool;
@@ -818,6 +820,8 @@ void load_object_collision_model(void) {
     f32 marioDist = gCurrentObject->oDistanceToMario;
     f32 tangibleDist = gCurrentObject->oCollisionDistance;
 
+    update_triangle_hook_start();
+
     // On an object's first frame, the distance is set to 19000.0f.
     // If the distance hasn't been updated, update it now.
     if (gCurrentObject->oDistanceToMario == 19000.0f) {
@@ -833,6 +837,9 @@ void load_object_collision_model(void) {
     // Update if no Time Stop, in range, and in the current room.
     if (!(gTimeStopState & TIME_STOP_ACTIVE) && marioDist < tangibleDist
         && !(gCurrentObject->activeFlags & ACTIVE_FLAG_IN_DIFFERENT_ROOM)) {
+
+        update_triangle_hook();
+
         collisionData++;
         transform_object_vertices(&collisionData, vertexData);
 

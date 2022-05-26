@@ -3391,3 +3391,349 @@ const s16 seg2_painting_mesh_neighbor_tris[] = {
       3, 240, 242, 244,
       1, 243,
 };
+
+/* === HITBOX HACK SPECIFIC ADDITIONS ================== */
+
+/* 0x3D7800 */
+ALIGNED8 static const Texture texture_hitbox_box[] = {
+#include "textures/segment2/hitbox_box.inc.c"
+};
+
+/* 0x3D9000 */
+ALIGNED8 static const Texture texture_hitbox_cylinder[] = {
+#include "textures/segment2/hitbox_cylinder.inc.c"
+};
+
+/* 0x3D8000 - 0x3D8400 */
+static const Vtx vertex_hitbox_cylinder24[] = {
+    {{{     0,      0,   1024}, 0, {     0,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,   1024}, 0, {     0,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   265,      0,    989}, 0, {    42,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   265,   1024,    989}, 0, {    42,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   511,      0,    886}, 0, {    85,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   511,   1024,    886}, 0, {    85,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   724,      0,    724}, 0, {   128,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   724,   1024,    724}, 0, {   128,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   886,      0,    512}, 0, {   170,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   886,   1024,    512}, 0, {   170,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   989,      0,    265}, 0, {   213,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   989,   1024,    265}, 0, {   213,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  1024,      0,      0}, 0, {   255,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  1024,   1024,      0}, 0, {   255,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  1024,      0,      0}, 0, {   256,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  1024,   1024,      0}, 0, {   256,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   989,      0,   -265}, 0, {   298,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   989,   1024,   -265}, 0, {   298,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   886,      0,   -512}, 0, {   341,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   886,   1024,   -512}, 0, {   341,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   724,      0,   -724}, 0, {   384,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   724,   1024,   -724}, 0, {   384,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   511,      0,   -886}, 0, {   426,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   511,   1024,   -886}, 0, {   426,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   265,      0,   -989}, 0, {   469,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{   265,   1024,   -989}, 0, {   469,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,  -1024}, 0, {   512,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,  -1024}, 0, {   512,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,  -1024}, 0, {   512,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,  -1024}, 0, {   512,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -265,      0,   -989}, 0, {   554,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -265,   1024,   -989}, 0, {   554,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -511,      0,   -886}, 0, {   597,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -511,   1024,   -886}, 0, {   597,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -724,      0,   -724}, 0, {   639,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -724,   1024,   -724}, 0, {   639,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -886,      0,   -512}, 0, {   682,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -886,   1024,   -512}, 0, {   682,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -989,      0,   -265}, 0, {   725,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -989,   1024,   -265}, 0, {   725,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{ -1024,      0,      0}, 0, {   767,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{ -1024,   1024,      0}, 0, {   767,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{ -1024,      0,      0}, 0, {   768,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{ -1024,   1024,      0}, 0, {   768,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -989,      0,    265}, 0, {   810,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -989,   1024,    265}, 0, {   810,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -886,      0,    511}, 0, {   853,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -886,   1024,    511}, 0, {   853,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -724,      0,    724}, 0, {   895,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -724,   1024,    724}, 0, {   895,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -512,      0,    886}, 0, {   938,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -512,   1024,    886}, 0, {   938,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -265,      0,    989}, 0, {   981,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{  -265,   1024,    989}, 0, {   981,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,   1024}, 0, {  1023,      0}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,   1024}, 0, {  1023,   1024}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,      0}, 0, {   512,    512}, {0xee, 0x66, 0x66, 0xaa}}},
+};
+
+/* 0x3D8400 - 0x3D8800 */
+static const Vtx vertex_hitbox_cylinder12[] = {
+    {{{     0,      0,   1024}, 0, {     0,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,   1024}, 0, {     0,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   511,      0,    886}, 0, {    85,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   511,   1024,    886}, 0, {    85,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   886,      0,    512}, 0, {   170,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   886,   1024,    512}, 0, {   170,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  1024,      0,      0}, 0, {   256,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  1024,   1024,      0}, 0, {   256,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   886,      0,   -511}, 0, {   341,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   886,   1024,   -511}, 0, {   341,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   512,      0,   -886}, 0, {   426,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{   512,   1024,   -886}, 0, {   426,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,  -1024}, 0, {   511,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,  -1024}, 0, {   511,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,      0}, 0, {   512,    512}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,      0}, 0, {   512,    512}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,  -1024}, 0, {   512,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,  -1024}, 0, {   512,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -512,      0,   -886}, 0, {   597,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -512,   1024,   -886}, 0, {   597,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -886,      0,   -511}, 0, {   682,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -886,   1024,   -511}, 0, {   682,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{ -1024,      0,      0}, 0, {   768,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{ -1024,   1024,      0}, 0, {   768,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -886,      0,    512}, 0, {   853,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -886,   1024,    512}, 0, {   853,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -511,      0,    886}, 0, {   938,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{  -511,   1024,    886}, 0, {   938,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,   1024}, 0, {  1024,      0}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,   1024}, 0, {  1024,   1024}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,      0,      0}, 0, {   512,    512}, {0xdd, 0x66, 0x66, 0xaa}}},
+    {{{     0,   1024,      0}, 0, {   512,    512}, {0xdd, 0x66, 0x66, 0xaa}}},
+};
+
+/* 0x3E0000 */
+Gfx dl_hitbox_level_dynamic[0x900 + 0x900 / 5] = {
+    gsSPEndDisplayList(),
+};
+
+
+/* 0x3E5500 */
+Vtx vertex_hitbox_level[0x900 * 3];
+
+// To detect overflow
+#ifndef TARGET_N64
+Gfx* const dl_hitbox_level_dynamic_end = dl_hitbox_level_dynamic + ARRAY_COUNT(dl_hitbox_level_dynamic);
+Vtx* const vertex_hitbox_level_end = vertex_hitbox_level + ARRAY_COUNT(vertex_hitbox_level);
+#endif
+
+// FIXED: Use proper (n=0x10, v0=0x00) indices when loading vertices instead of faulty ones (n=0x0F, v0=0x10, this compiles to the same bytecode as the original hack)
+
+/* 0x3D8600 */
+static const Gfx dl_hitbox_24cyl[] = {
+    gsSPVertex(vertex_hitbox_cylinder24 + 0x00, 0x10, 0), //set to address
+    gsSP1Triangle(2, 0, 14, 0),
+    gsSP1Triangle(1, 3, 15, 0),
+    gsSP1Triangle(2, 3, 0, 0),
+    gsSP1Triangle(3, 1, 0, 0),
+    gsSP1Triangle(4, 2, 14, 0),
+    gsSP1Triangle(3, 5, 15, 0),
+    gsSP1Triangle(4, 5, 2, 0),
+    gsSP1Triangle(5, 3, 2, 0),
+    gsSP1Triangle(6, 4, 14, 0),
+    gsSP1Triangle(5, 7, 15, 0),
+    gsSP1Triangle(6, 7, 4, 0),
+    gsSP1Triangle(7, 5, 4, 0),
+    gsSP1Triangle(8, 6, 14, 0),
+    gsSP1Triangle(7, 9, 15, 0),
+    gsSP1Triangle(8, 9, 6, 0),
+    gsSP1Triangle(9, 7, 6, 0),
+    gsSP1Triangle(10, 8, 14, 0),
+    gsSP1Triangle(9, 11, 15, 0),
+    gsSP1Triangle(10, 11, 8, 0),
+    gsSP1Triangle(11, 9, 8, 0),
+    gsSP1Triangle(12, 10, 14, 0),
+    gsSP1Triangle(11, 13, 15, 0),
+    gsSP1Triangle(12, 13, 10, 0),
+    gsSP1Triangle(13, 11, 10, 0),
+
+    gsSPVertex(vertex_hitbox_cylinder24 + 0x10, 0x10, 0), //set to address
+    gsSP1Triangle(2, 0, 14, 0),
+    gsSP1Triangle(1, 3, 15, 0),
+    gsSP1Triangle(2, 3, 0, 0),
+    gsSP1Triangle(3, 1, 0, 0),
+    gsSP1Triangle(4, 2, 14, 0),
+    gsSP1Triangle(3, 5, 15, 0),
+    gsSP1Triangle(4, 5, 2, 0),
+    gsSP1Triangle(5, 3, 2, 0),
+    gsSP1Triangle(6, 4, 14, 0),
+    gsSP1Triangle(5, 7, 15, 0),
+    gsSP1Triangle(6, 7, 4, 0),
+    gsSP1Triangle(7, 5, 4, 0),
+    gsSP1Triangle(8, 6, 14, 0),
+    gsSP1Triangle(7, 9, 15, 0),
+    gsSP1Triangle(8, 9, 6, 0),
+    gsSP1Triangle(9, 7, 6, 0),
+    gsSP1Triangle(10, 8, 14, 0),
+    gsSP1Triangle(9, 11, 15, 0),
+    gsSP1Triangle(10, 11, 8, 0),
+    gsSP1Triangle(11, 9, 8, 0),
+    gsSP1Triangle(12, 10, 14, 0),
+    gsSP1Triangle(11, 13, 15, 0),
+    gsSP1Triangle(12, 13, 10, 0),
+    gsSP1Triangle(13, 11, 10, 0),
+
+    gsSPVertex(vertex_hitbox_cylinder24 + 0x20, 0x10, 0), //set to address
+    gsSP1Triangle(2, 0, 14, 0),
+    gsSP1Triangle(1, 3, 15, 0),
+    gsSP1Triangle(2, 3, 0, 0),
+    gsSP1Triangle(3, 1, 0, 0),
+    gsSP1Triangle(4, 2, 14, 0),
+    gsSP1Triangle(3, 5, 15, 0),
+    gsSP1Triangle(4, 5, 2, 0),
+    gsSP1Triangle(5, 3, 2, 0),
+    gsSP1Triangle(6, 4, 14, 0),
+    gsSP1Triangle(5, 7, 15, 0),
+    gsSP1Triangle(6, 7, 4, 0),
+    gsSP1Triangle(7, 5, 4, 0),
+    gsSP1Triangle(8, 6, 14, 0),
+    gsSP1Triangle(7, 9, 15, 0),
+    gsSP1Triangle(8, 9, 6, 0),
+    gsSP1Triangle(9, 7, 6, 0),
+    gsSP1Triangle(10, 8, 14, 0),
+    gsSP1Triangle(9, 11, 15, 0),
+    gsSP1Triangle(10, 11, 8, 0),
+    gsSP1Triangle(11, 9, 8, 0),
+    gsSP1Triangle(12, 10, 14, 0),
+    gsSP1Triangle(11, 13, 15, 0),
+    gsSP1Triangle(12, 13, 10, 0),
+    gsSP1Triangle(13, 11, 10, 0),
+
+    gsSPVertex(vertex_hitbox_cylinder24 + 0x30, 0x10, 0), //set to address
+    gsSP1Triangle(2, 0, 14, 0),
+    gsSP1Triangle(1, 3, 15, 0),
+    gsSP1Triangle(2, 3, 0, 0),
+    gsSP1Triangle(3, 1, 0, 0),
+    gsSP1Triangle(4, 2, 14, 0),
+    gsSP1Triangle(3, 5, 15, 0),
+    gsSP1Triangle(4, 5, 2, 0),
+    gsSP1Triangle(5, 3, 2, 0),
+    gsSP1Triangle(6, 4, 14, 0),
+    gsSP1Triangle(5, 7, 15, 0),
+    gsSP1Triangle(6, 7, 4, 0),
+    gsSP1Triangle(7, 5, 4, 0),
+    gsSP1Triangle(8, 6, 14, 0),
+    gsSP1Triangle(7, 9, 15, 0),
+    gsSP1Triangle(8, 9, 6, 0),
+    gsSP1Triangle(9, 7, 6, 0),
+    gsSP1Triangle(10, 8, 14, 0),
+    gsSP1Triangle(9, 11, 15, 0),
+    gsSP1Triangle(10, 11, 8, 0),
+    gsSP1Triangle(11, 9, 8, 0),
+    gsSP1Triangle(12, 10, 14, 0),
+    gsSP1Triangle(11, 13, 15, 0),
+    gsSP1Triangle(12, 13, 10, 0),
+    gsSP1Triangle(13, 11, 10, 0),
+
+    gsSPEndDisplayList(),
+};
+
+/* 0x3D8A00 */
+static const Gfx dl_hitbox_12cyl[] = {
+    gsSPVertex(vertex_hitbox_cylinder12 + 0x00, 0x10, 0), //set to address
+    gsSP1Triangle(2, 0, 14, 0),
+    gsSP1Triangle(1, 3, 15, 0),
+    gsSP1Triangle(2, 3, 0, 0),
+    gsSP1Triangle(3, 1, 0, 0),
+    gsSP1Triangle(4, 2, 14, 0),
+    gsSP1Triangle(3, 5, 15, 0),
+    gsSP1Triangle(4, 5, 2, 0),
+    gsSP1Triangle(5, 3, 2, 0),
+    gsSP1Triangle(6, 4, 14, 0),
+    gsSP1Triangle(5, 7, 15, 0),
+    gsSP1Triangle(6, 7, 4, 0),
+    gsSP1Triangle(7, 5, 4, 0),
+    gsSP1Triangle(8, 6, 14, 0),
+    gsSP1Triangle(7, 9, 15, 0),
+    gsSP1Triangle(8, 9, 6, 0),
+    gsSP1Triangle(9, 7, 6, 0),
+    gsSP1Triangle(10, 8, 14, 0),
+    gsSP1Triangle(9, 11, 15, 0),
+    gsSP1Triangle(10, 11, 8, 0),
+    gsSP1Triangle(11, 9, 8, 0),
+    gsSP1Triangle(12, 10, 14, 0),
+    gsSP1Triangle(11, 13, 15, 0),
+    gsSP1Triangle(12, 13, 10, 0),
+    gsSP1Triangle(13, 11, 10, 0),
+
+    gsSPVertex(vertex_hitbox_cylinder12 + 0x10, 0x10, 0), //set to address
+    gsSP1Triangle(2, 0, 14, 0),
+    gsSP1Triangle(1, 3, 15, 0),
+    gsSP1Triangle(2, 3, 0, 0),
+    gsSP1Triangle(3, 1, 0, 0),
+    gsSP1Triangle(4, 2, 14, 0),
+    gsSP1Triangle(3, 5, 15, 0),
+    gsSP1Triangle(4, 5, 2, 0),
+    gsSP1Triangle(5, 3, 2, 0),
+    gsSP1Triangle(6, 4, 14, 0),
+    gsSP1Triangle(5, 7, 15, 0),
+    gsSP1Triangle(6, 7, 4, 0),
+    gsSP1Triangle(7, 5, 4, 0),
+    gsSP1Triangle(8, 6, 14, 0),
+    gsSP1Triangle(7, 9, 15, 0),
+    gsSP1Triangle(8, 9, 6, 0),
+    gsSP1Triangle(9, 7, 6, 0),
+    gsSP1Triangle(10, 8, 14, 0),
+    gsSP1Triangle(9, 11, 15, 0),
+    gsSP1Triangle(10, 11, 8, 0),
+    gsSP1Triangle(11, 9, 8, 0),
+    gsSP1Triangle(12, 10, 14, 0),
+    gsSP1Triangle(11, 13, 15, 0),
+    gsSP1Triangle(12, 13, 10, 0),
+    gsSP1Triangle(13, 11, 10, 0),
+
+    gsSPEndDisplayList(),
+};
+
+// Level geometry display list (max 16 commands here!)
+/* 0x3D6F00 */
+const Gfx dl_hitbox_level[] = {
+    gsDPPipeSync(),
+    //gsDPSetCombine(0x121824, 0xFF33FFFF), // (aquarium)
+    gsDPSetCombineLERP(TEXEL0, K5, SHADE, COMBINED_ALPHA, 0, 0, 0, SHADE, TEXEL0, K5, SHADE, NOISE, 0, 0, 0, SHADE), // (influenced by environment color triangles?)
+    gsSPClearGeometryMode(G_LIGHTING),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPTileSync(),
+    // 0xF5101000, 0x00014050	//G_SETTILE RGBA 16-bit
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD),
+    // 0xF2000000, 0x0007C07C	//G_SETTILESIZE 32 * 32
+    gsDPSetTileSize(0, 0, 0, 0x7C, 0x7C), // 0x7C = 124
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b_BYTES, 1, texture_hitbox_box),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 0x3FF, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    //gsDPSetEnvColor(0xFF, 0x88, 0x88, 0x88), // (doesn't work with this combine / lighting mode?!)
+    gsSPDisplayList(dl_hitbox_level_dynamic), // level geometry list
+    gsSPSetGeometryMode(G_LIGHTING),
+    gsSPEndDisplayList(),
+};
+
+// Cylinder display list (max 14 commands here!)
+/* 0x3D6F80 */
+const Gfx dl_hitbox_cylinder[] = {
+    gsDPPipeSync(),
+    //gsDPSetCombine(0x127E24, 0xFFFFF9FC),
+    // 0001 0010 0111 1110 0010 0100 | 1111 1111 1111 1111 1111 1001 1111 1100
+    // 0001 00100 111 111 0001 00100 | 1111 1111 111 111 111 111 100 111 111 100
+    // ^ a0    c0 Aa0 Ac0   a1    c1     b0   b1 Aa1 Ac1  d0 Ab0 Ad0  d1 Ab1 Ad1
+    // LERP(C:a0, C:b0, C:c0, C:d0, A:a0, A:b0, A:c0, A:d0, C:a1, C:b1, C:c1, C:d1, A:a1, A:b1, A:c1, A:d1)
+    gsDPSetCombineLERP(TEXEL0, K5, SHADE, COMBINED_ALPHA, 0, 0, 0, SHADE, TEXEL0, K5, SHADE, NOISE, 0, 0, 0, SHADE),
+    gsSPClearGeometryMode(G_LIGHTING),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPTileSync(),
+    // 0xF5101000, 0x00014050	//G_SETTILE RGBA 16-bit
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD),
+    gsDPSetTileSize(0, 0, 0, 0x7C, 0x7C),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, texture_hitbox_cylinder),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 0x3FF, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    gsSPDisplayList(dl_hitbox_24cyl),
+    gsDPPipeSync(),
+    gsSPSetGeometryMode(G_LIGHTING),
+    gsSPEndDisplayList(),
+};
