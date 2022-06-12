@@ -5,6 +5,8 @@
 
 #include "types.h"
 
+#define SHOW_HURTBOXES 1
+
 void update_triangle_hook(void);
 void update_triangle_hook_start(void);
 void obj_draw_hitboxes(u32 in_view, struct Object *node);

@@ -7,6 +7,7 @@
 #include "game/ingame_menu.h"
 
 #include "make_const_nonconst.h"
+#include "game/hitbox_hack.h"
 
 // SM64 (US/JP/EU/SH) Segment 02
 
@@ -3514,6 +3515,16 @@ static const Vtx vertex_hitbox_cylinder12[] = {
     HITBOX_CYLINDER12(0xdd, 0x66, 0x66, 0xaa)
 };
 
+#if SHOW_HURTBOXES
+static const Vtx vertex_hurtbox_cylinder24[] = {
+    HITBOX_CYLINDER24(0xbb, 0x66, 0xee, 0xaa)
+};
+
+static const Vtx vertex_hurtbox_cylinder12[] = {
+    HITBOX_CYLINDER12(0xbb, 0x66, 0xee, 0xaa)
+};
+#endif
+
 #undef HITBOX_CYLINDER24
 #undef HITBOX_CYLINDER12
 
@@ -3588,6 +3599,34 @@ static const Gfx dl_hitbox_12cyl[] = {
     gsSPEndDisplayList(),
 };
 
+#if SHOW_HURTBOXES
+static const Gfx dl_hurtbox_24cyl[] = {
+    gsSPVertex(vertex_hurtbox_cylinder24 + 0x00, 0x10, 0),
+    HITBOX_VERTS()
+
+    gsSPVertex(vertex_hurtbox_cylinder24 + 0x10, 0x10, 0),
+    HITBOX_VERTS()
+
+    gsSPVertex(vertex_hurtbox_cylinder24 + 0x20, 0x10, 0),
+    HITBOX_VERTS()
+
+    gsSPVertex(vertex_hurtbox_cylinder24 + 0x30, 0x10, 0),
+    HITBOX_VERTS()
+
+    gsSPEndDisplayList(),
+};
+
+static const Gfx dl_hurtbox_12cyl[] = {
+    gsSPVertex(vertex_hurtbox_cylinder12 + 0x00, 0x10, 0),
+    HITBOX_VERTS()
+
+    gsSPVertex(vertex_hurtbox_cylinder12 + 0x10, 0x10, 0),
+    HITBOX_VERTS()
+
+    gsSPEndDisplayList(),
+};
+#endif
+
 #undef HITBOX_VERTS
 
 // Level geometry display list (max 16 commands here!)
@@ -3636,3 +3675,28 @@ const Gfx dl_hitbox_cylinder[] = {
     gsSPSetGeometryMode(G_LIGHTING),
     gsSPEndDisplayList(),
 };
+
+#if SHOW_HURTBOXES
+const Gfx dl_hurtbox_cylinder[] = {
+    gsDPPipeSync(),
+    //gsDPSetCombine(0x127E24, 0xFFFFF9FC),
+    // 0001 0010 0111 1110 0010 0100 | 1111 1111 1111 1111 1111 1001 1111 1100
+    // 0001 00100 111 111 0001 00100 | 1111 1111 111 111 111 111 100 111 111 100
+    // ^ a0    c0 Aa0 Ac0   a1    c1     b0   b1 Aa1 Ac1  d0 Ab0 Ad0  d1 Ab1 Ad1
+    // LERP(C:a0, C:b0, C:c0, C:d0, A:a0, A:b0, A:c0, A:d0, C:a1, C:b1, C:c1, C:d1, A:a1, A:b1, A:c1, A:d1)
+    gsDPSetCombineLERP(TEXEL0, K5, SHADE, COMBINED_ALPHA, 0, 0, 0, SHADE, TEXEL0, K5, SHADE, NOISE, 0, 0, 0, SHADE),
+    gsSPClearGeometryMode(G_LIGHTING),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPTileSync(),
+    // 0xF5101000, 0x00014050	//G_SETTILE RGBA 16-bit
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, 5, G_TX_NOLOD),
+    gsDPSetTileSize(0, 0, 0, 0x7C, 0x7C),
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, texture_hitbox_cylinder),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 0x3FF, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    gsSPDisplayList(dl_hurtbox_24cyl),
+    gsDPPipeSync(),
+    gsSPSetGeometryMode(G_LIGHTING),
+    gsSPEndDisplayList(),
+};
+#endif

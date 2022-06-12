@@ -8,6 +8,7 @@
 #include <PR/gbi.h>
 
 #include "engine/math_util.h"
+#include "game/hitbox_hack.h"
 #include "game/memory.h"
 #include "object_list_processor.h"
 #include "object_helpers.h"
@@ -27,6 +28,9 @@
 // External data segment declarations
 extern const Gfx dl_hitbox_level[];
 extern const Gfx dl_hitbox_cylinder[];
+#if SHOW_HURTBOXES
+extern const Gfx dl_hurtbox_cylinder[];
+#endif
 extern Gfx dl_hitbox_level_dynamic[];
 extern Vtx vertex_hitbox_level[];
 #ifndef TARGET_N64
@@ -239,6 +243,23 @@ void obj_draw_hitboxes(u32 in_view, struct Object *node) {
 	mtxf_to_mtx(mat, stack[1]);
 	geo_append_display_list((void *)dl_hitbox_cylinder, LAYER_TRANSPARENT);
 	--gMatStackIndex;
+
+	#if SHOW_HURTBOXES
+	height = node->hurtboxHeight * /*0x1p-10f*/ (1.0f/1024);
+	radius = node->hurtboxRadius * /*0x1p-10f*/ (1.0f/1024);
+	mtx[0][0] = radius;
+	mtx[1][1] = height;
+	mtx[2][2] = radius;
+
+	stack = &gMatStack[gMatStackIndex];
+	mtxf_mul(stack[1], mtx, stack[0]);
+	++gMatStackIndex;
+	mat = alloc_display_list(sizeof(Mtx));
+	gMatStackFixed[gMatStackIndex] = mat;
+	mtxf_to_mtx(mat, stack[1]);
+	geo_append_display_list((void *)dl_hurtbox_cylinder, LAYER_TRANSPARENT);
+	--gMatStackIndex;
+	#endif
 }
 
 static void set_landscape_invisible(u32 enable) {
