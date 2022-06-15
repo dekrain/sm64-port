@@ -2,7 +2,7 @@
 // Ported by @DeKrain in C
 
 #include "behavior_data.h"
-#include "clean-build/src/game/game_init.h"
+#include "game/game_init.h"
 #include "engine/graph_node.h"
 #include <PR/ultratypes.h>
 #include <PR/gbi.h>
@@ -31,11 +31,16 @@ extern const Gfx dl_hitbox_cylinder[];
 #if SHOW_HURTBOXES
 extern const Gfx dl_hurtbox_cylinder[];
 #endif
-extern Gfx dl_hitbox_level_dynamic[];
-extern Vtx vertex_hitbox_level[];
+
+extern Gfx dl_hitbox_level_dynamic_pointer;
+
+extern Gfx dl_hitbox_level_dynamic[0x900 + 0x900 / 5];
+extern Vtx vertex_hitbox_level[0x900 * 3];
+
 #ifndef TARGET_N64
-extern Gfx* const dl_hitbox_level_dynamic_end;
-extern Vtx* const vertex_hitbox_level_end;
+// To detect overflow
+static Gfx* const dl_hitbox_level_dynamic_end = dl_hitbox_level_dynamic + ARRAY_COUNT(dl_hitbox_level_dynamic);
+static Vtx* const vertex_hitbox_level_end = vertex_hitbox_level + ARRAY_COUNT(vertex_hitbox_level);
 #endif
 
 /* 0x3D6FF0 */
@@ -141,7 +146,7 @@ static void draw_level_triangles(u32 prev_enable) {
 	}
 
 	offset = lastindex % 5;
-	listpointer = dl_hitbox_level_dynamic + lastindex + lastindex / 5;
+	listpointer = (Gfx *)segmented_to_virtual(dl_hitbox_level_dynamic) + lastindex + lastindex / 5;
 
 	//is THIS *the* fix of ages?
 	// SPOILER: probably no
@@ -156,7 +161,7 @@ static void draw_level_triangles(u32 prev_enable) {
 	#else
 	triangle = sSurfacePool + lastindex;
 	#endif
-	vertexpointer = vertex_hitbox_level + 3 * lastindex;
+	vertexpointer = (Vtx *)segmented_to_virtual(vertex_hitbox_level) + 3 * lastindex;
 
 	while (lastindex < totalcount && lastindex < 0x8D0) {
 		if (offset == 0) {
@@ -184,7 +189,8 @@ static void draw_level_triangles(u32 prev_enable) {
 	gSPNoOp(listpointer++);
 	gSPNoOp(listpointer++);
 	gSPNoOp(listpointer++);
-	geo_append_display_list((void *)dl_hitbox_level, LAYER_OPAQUE);
+	gSPBranchList(segmented_to_virtual(&dl_hitbox_level_dynamic_pointer), dl_hitbox_level_dynamic);
+	geo_append_display_list(segmented_to_virtual(dl_hitbox_level), LAYER_OPAQUE);
 }
 
 void obj_draw_hitboxes(u32 in_view, struct Object *node) {
@@ -241,7 +247,7 @@ void obj_draw_hitboxes(u32 in_view, struct Object *node) {
 	mat = alloc_display_list(sizeof(Mtx));
 	gMatStackFixed[gMatStackIndex] = mat;
 	mtxf_to_mtx(mat, stack[1]);
-	geo_append_display_list((void *)dl_hitbox_cylinder, LAYER_TRANSPARENT);
+	geo_append_display_list(segmented_to_virtual(dl_hitbox_cylinder), LAYER_TRANSPARENT);
 	--gMatStackIndex;
 
 	#if SHOW_HURTBOXES
@@ -257,7 +263,7 @@ void obj_draw_hitboxes(u32 in_view, struct Object *node) {
 	mat = alloc_display_list(sizeof(Mtx));
 	gMatStackFixed[gMatStackIndex] = mat;
 	mtxf_to_mtx(mat, stack[1]);
-	geo_append_display_list((void *)dl_hurtbox_cylinder, LAYER_TRANSPARENT);
+	geo_append_display_list(segmented_to_virtual(dl_hurtbox_cylinder), LAYER_TRANSPARENT);
 	--gMatStackIndex;
 	#endif
 }
@@ -267,7 +273,7 @@ static void set_landscape_invisible(u32 enable) {
 	struct Object *current = head;
 
 	while ((current = (struct Object *)current->header.next) != head) {
-		if (current->behavior != bhvStaticObject) {
+		if (current->behavior != segmented_to_virtual(bhvStaticObject)) {
 			continue;
 		}
 		if (enable) {

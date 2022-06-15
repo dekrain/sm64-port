@@ -3528,21 +3528,6 @@ static const Vtx vertex_hurtbox_cylinder12[] = {
 #undef HITBOX_CYLINDER24
 #undef HITBOX_CYLINDER12
 
-/* 0x3E0000 */
-Gfx dl_hitbox_level_dynamic[0x900 + 0x900 / 5] = {
-    gsSPEndDisplayList(),
-};
-
-
-/* 0x3E5500 */
-Vtx vertex_hitbox_level[0x900 * 3];
-
-// To detect overflow
-#ifndef TARGET_N64
-Gfx* const dl_hitbox_level_dynamic_end = dl_hitbox_level_dynamic + ARRAY_COUNT(dl_hitbox_level_dynamic);
-Vtx* const vertex_hitbox_level_end = vertex_hitbox_level + ARRAY_COUNT(vertex_hitbox_level);
-#endif
-
 // FIXED: Use proper (n=0x10, v0=0x00) indices when loading vertices instead of faulty ones (n=0x0F, v0=0x10, this compiles to the same bytecode as the original hack)
 
 #define HITBOX_VERTS() \
@@ -3629,6 +3614,8 @@ static const Gfx dl_hurtbox_12cyl[] = {
 
 #undef HITBOX_VERTS
 
+Gfx dl_hitbox_level_dynamic_pointer = gsSPEndDisplayList();
+
 // Level geometry display list (max 16 commands here!)
 /* 0x3D6F00 */
 const Gfx dl_hitbox_level[] = {
@@ -3646,7 +3633,7 @@ const Gfx dl_hitbox_level[] = {
     gsDPLoadSync(),
     gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 0x3FF, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
     //gsDPSetEnvColor(0xFF, 0x88, 0x88, 0x88), // (doesn't work with this combine / lighting mode?!)
-    gsSPDisplayList(dl_hitbox_level_dynamic), // level geometry list
+    gsSPDisplayList(&dl_hitbox_level_dynamic_pointer), // level geometry list
     gsSPSetGeometryMode(G_LIGHTING),
     gsSPEndDisplayList(),
 };
