@@ -502,12 +502,6 @@ static void gfx_dxgi_swap_buffers_end(void) {
     //printf("done %llu gpu:%d wait:%d freed:%llu frame:%u %u monitor:%u t:%llu\n", (unsigned long long)(t0.QuadPart - dxgi.qpc_init), (int)(t1.QuadPart - t0.QuadPart), (int)(t2.QuadPart - t0.QuadPart), (unsigned long long)(t2.QuadPart - dxgi.qpc_init), dxgi.pending_frame_stats.rbegin()->first, stats.PresentCount, stats.SyncRefreshCount, (unsigned long long)(stats.SyncQPCTime.QuadPart - dxgi.qpc_init));
 }
 
-static double gfx_dxgi_get_time(void) {
-    LARGE_INTEGER t;
-    QueryPerformanceCounter(&t);
-    return (double)(t.QuadPart - dxgi.qpc_init) / dxgi.qpc_freq;
-}
-
 void gfx_dxgi_create_factory_and_device(bool debug, int d3d_version, bool (*create_device_fn)(IDXGIAdapter1 *adapter, bool test_only)) {
     if (dxgi.CreateDXGIFactory2 != nullptr) {
         ThrowIfFailed(dxgi.CreateDXGIFactory2(debug ? DXGI_CREATE_FACTORY_DEBUG : 0, __uuidof(IDXGIFactory2), &dxgi.factory));
@@ -608,7 +602,6 @@ struct GfxWindowManagerAPI gfx_dxgi_api = {
     gfx_dxgi_start_frame,
     gfx_dxgi_swap_buffers_begin,
     gfx_dxgi_swap_buffers_end,
-    gfx_dxgi_get_time,
 };
 
 #endif

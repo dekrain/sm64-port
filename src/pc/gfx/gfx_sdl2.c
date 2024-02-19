@@ -294,10 +294,6 @@ static void gfx_sdl_swap_buffers_begin(void) {
 static void gfx_sdl_swap_buffers_end(void) {
 }
 
-static double gfx_sdl_get_time(void) {
-    return 0.0;
-}
-
 struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_init,
     gfx_sdl_set_keyboard_callbacks,
@@ -309,7 +305,6 @@ struct GfxWindowManagerAPI gfx_sdl = {
     gfx_sdl_start_frame,
     gfx_sdl_swap_buffers_begin,
     gfx_sdl_swap_buffers_end,
-    gfx_sdl_get_time
 };
 
 #endif

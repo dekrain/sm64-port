@@ -17,6 +17,8 @@
 #include "gfx_window_manager_api.h"
 #include "gfx_screen_config.h"
 
+#include "../systime.h"
+
 #define GFX_API_NAME "GLX - OpenGL"
 
 #ifdef VERSION_EU
@@ -189,12 +191,6 @@ static struct {
     int64_t this_ust;
 } glx;
 
-static int64_t get_time(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return (int64_t)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
-}
-
 static int64_t adjust_sync_counter(uint32_t counter) {
     uint32_t hi = glx.last_sync_counter >> 32;
     uint32_t lo = (uint32_t)glx.last_sync_counter;
@@ -365,7 +361,7 @@ static void gfx_glx_init(const char *game_name, bool start_in_fullscreen) {
         glx.has_oml_sync_control = true;
         glx.ust0 = (uint64_t)ust;
     } else {
-        glx.ust0 = get_time();
+        glx.ust0 = sys_get_time_usec();
         if (glx.glXSwapIntervalEXT != NULL) {
             glx.glXSwapIntervalEXT(glx.dpy, glx.win, 1);
         } else if (glx.glXSwapIntervalSGI != NULL) {
@@ -460,7 +456,7 @@ static void gfx_glx_swap_buffers_begin(void) {
         
         uint64_t target = glx.wanted_ust / FRAME_INTERVAL_US_DENOMINATOR;
         uint64_t now;
-        while (target > (now = (uint64_t)get_time() - glx.ust0)) {
+        while (target > (now = sys_get_time_usec() - glx.ust0)) {
             struct timespec ts = {(target - now) / 1000000, ((target - now) % 1000000) * 1000};
             if (nanosleep(&ts, NULL) == 0) {
                 break;
@@ -531,7 +527,7 @@ static void gfx_glx_swap_buffers_begin(void) {
         //uint64_t counter0;
         uint64_t counter1, counter2;
         
-        //uint64_t before_wait = get_time();
+        //uint64_t before_wait = sys_get_time_usec();
         
         counter1 = glXGetVideoSyncSGI_wrapper();
         //counter0 = counter1;
@@ -541,7 +537,7 @@ static void gfx_glx_swap_buffers_begin(void) {
             //++waits;
         }
         
-        //uint64_t before = get_time();
+        //uint64_t before = sys_get_time_usec();
         glXSwapBuffers(glx.dpy, glx.win);
         
         
@@ -549,7 +545,7 @@ static void gfx_glx_swap_buffers_begin(void) {
         while (counter2 < (uint64_t)glx.target_msc) {
             counter2 = glXWaitVideoSyncSGI_wrapper();
         }
-        uint64_t after = get_time();
+        uint64_t after = sys_get_time_usec();
         
         //printf("%.3f %.3f %.3f\t%.3f\t%u %d %.2f %u %d\n", before_wait * 0.000060, before * 0.000060, after * 0.000060, (after - before) * 0.000060, counter0, counter2 - counter0, vsyncs_to_wait, (unsigned int)glx.target_msc, waits);
         glx.this_msc = counter2;
@@ -599,10 +595,6 @@ static void gfx_glx_swap_buffers_end(void) {
     }
 }
 
-static double gfx_glx_get_time(void) {
-    return 0.0;
-}
-
 struct GfxWindowManagerAPI gfx_glx = {
     gfx_glx_init,
     gfx_glx_set_keyboard_callbacks,
@@ -614,7 +606,6 @@ struct GfxWindowManagerAPI gfx_glx = {
     gfx_glx_start_frame,
     gfx_glx_swap_buffers_begin,
     gfx_glx_swap_buffers_end,
-    gfx_glx_get_time
 };
 
 #endif

@@ -28,7 +28,7 @@
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
 
-#include <time.h>
+#include "../systime.h"
 
 #include <alsa/asoundlib.h>
 #include <stdio.h>
@@ -38,12 +38,6 @@
 #define PCM_DEVICE "default"
 static snd_pcm_t *pcm_handle;
 static unsigned long int alsa_buffer_size;
-
-static unsigned long get_time(void) {
-	struct timespec ts;
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	return (unsigned long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
-}
 
 static bool audio_alsa_init(void) {
 	int pcm;
@@ -140,7 +134,7 @@ static void audio_alsa_play(const uint8_t* buff, size_t len) {
     if (!pcm_handle) {
         audio_alsa_init();
     }
-	//unsigned long t1 = get_time();
+	//uint64_t t1 = sys_get_time_usec();
     int frames = len / 4;
     int pcm;
 	if ((pcm = snd_pcm_writei(pcm_handle, buff, frames)) == -EPIPE) {
@@ -157,7 +151,7 @@ static void audio_alsa_play(const uint8_t* buff, size_t len) {
 		printf("ERROR. Can't write to PCM device. %s\n", snd_strerror(pcm));
 		return;
 	}
-	//fprintf(stderr, "%u ", get_time() - t1);
+	//fprintf(stderr, "%llu ", sys_get_time_usec() - t1);
 }
 
 struct AudioAPI audio_alsa = {

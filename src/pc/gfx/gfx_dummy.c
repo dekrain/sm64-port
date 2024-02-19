@@ -74,10 +74,6 @@ static void gfx_dummy_wm_swap_buffers_end(void) {
     }
 }
 
-static double gfx_dummy_wm_get_time(void) {
-    return 0.0;
-}
-
 static bool gfx_dummy_renderer_z_is_from_0_to_1(void) {
     return false;
 }
@@ -162,7 +158,6 @@ struct GfxWindowManagerAPI gfx_dummy_wm_api = {
     gfx_dummy_wm_start_frame,
     gfx_dummy_wm_swap_buffers_begin,
     gfx_dummy_wm_swap_buffers_end,
-    gfx_dummy_wm_get_time
 };
 
 struct GfxRenderingAPI gfx_dummy_renderer_api = {
