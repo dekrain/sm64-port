@@ -1,5 +1,3 @@
-#ifdef ENABLE_DX12
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -962,5 +960,3 @@ struct GfxRenderingAPI gfx_direct3d12_api = {
     gfx_direct3d12_end_frame,
     gfx_direct3d12_finish_render
 };
-
-#endif

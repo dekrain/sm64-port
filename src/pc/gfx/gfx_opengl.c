@@ -1,5 +1,3 @@
-#ifdef ENABLE_OPENGL
-
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -527,5 +525,3 @@ struct GfxRenderingAPI gfx_opengl_api = {
     gfx_opengl_end_frame,
     gfx_opengl_finish_render
 };
-
-#endif

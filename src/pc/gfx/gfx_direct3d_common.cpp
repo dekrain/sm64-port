@@ -1,5 +1,3 @@
-#if defined(ENABLE_DX11) || defined(ENABLE_DX12)
-
 #include <cstdio>
 
 #include "gfx_direct3d_common.h"
@@ -309,5 +307,3 @@ void gfx_direct3d_common_build_shader(char buf[4096], size_t& len, size_t& num_f
     }
     append_line(buf, &len, "}");
 }
-
-#endif

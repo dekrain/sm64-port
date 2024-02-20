@@ -1,5 +1,3 @@
-#if defined(ENABLE_DX11) || defined(ENABLE_DX12)
-
 #include <stdint.h>
 #include <math.h>
 
@@ -603,5 +601,3 @@ struct GfxWindowManagerAPI gfx_dxgi_api = {
     gfx_dxgi_swap_buffers_begin,
     gfx_dxgi_swap_buffers_end,
 };
-
-#endif

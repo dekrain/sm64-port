@@ -1,5 +1,3 @@
-#ifdef ENABLE_GFX_DUMMY
-
 #ifndef GFX_DUMMY_H
 #define GFX_DUMMY_H
 
@@ -8,7 +6,5 @@
 
 extern struct GfxRenderingAPI gfx_dummy_renderer_api;
 extern struct GfxWindowManagerAPI gfx_dummy_wm_api;
-
-#endif
 
 #endif

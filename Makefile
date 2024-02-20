@@ -51,10 +51,21 @@ ifeq ($(TARGET_N64),0)
       ifneq ($(ENABLE_DX12),1)
         ENABLE_DX11 ?= 1
       endif
+    else
+      ENABLE_WM_SDL ?= 1
     endif
   else
     # On others, default to OpenGL
     ENABLE_OPENGL ?= 1
+    ifeq ($(TARGET_LINUX),1)
+      ENABLE_WM_X11 ?= 1
+    endif
+  endif
+
+  ifeq ($(ENABLE_OPENGL),1)
+    ifneq ($(ENABLE_WM_X11), 1)
+      ENABLE_WM_SDL ?= 1
+    endif
   endif
 
   # Sanity checks
@@ -298,7 +309,26 @@ SRC_DIRS := src src/engine src/game src/audio src/menu src/buffers actors levels
 ifeq ($(TARGET_N64),1)
   SRC_DIRS += asm lib
 else
-  SRC_DIRS += src/pc src/pc/gfx src/pc/audio src/pc/controller
+  SRC_DIRS += src/pc src/pc/audio src/pc/controller
+  PC_GFX_DIRS := src/pc/gfx
+  PC_GFX_FILES := gfx_cc.c gfx_pc.c gfx_dummy.c
+
+  ifeq ($(ENABLE_DX11), 1)
+    PC_GFX_FILES_CXX += gfx_direct3d11.cpp
+    PC_GFX_FILES_CXX += gfx_direct3d_common.cpp gfx_dxgi.cpp
+  else ifeq ($(ENABLE_DX12), 1)
+    PC_GFX_FILES_CXX += gfx_direct3d12.cpp
+    PC_GFX_FILES_CXX += gfx_direct3d_common.cpp gfx_dxgi.cpp
+  endif
+  ifeq ($(ENABLE_OPENGL), 1)
+    PC_GFX_FILES += gfx_opengl.c
+    ifeq ($(ENABLE_WM_SDL), 1)
+      PC_GFX_FILES += gfx_sdl2.c
+    endif
+  endif
+  ifeq ($(ENABLE_WM_X11),1)
+    PC_GFX_FILES += gfx_glx.c
+  endif
 endif
 BIN_DIRS := bin bin/$(VERSION)
 
@@ -312,8 +342,8 @@ include Makefile.split
 
 # Source code files
 LEVEL_C_FILES     := $(wildcard levels/*/leveldata.c) $(wildcard levels/*/script.c) $(wildcard levels/*/geo.c)
-C_FILES           := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)) $(LEVEL_C_FILES)
-CXX_FILES         := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp))
+C_FILES           := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c)) $(foreach file,$(PC_GFX_FILES),src/pc/gfx/$(file)) $(LEVEL_C_FILES)
+CXX_FILES         := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.cpp)) $(foreach file,$(PC_GFX_FILES_CXX),src/pc/gfx/$(file))
 S_FILES           := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.s))
 ULTRA_C_FILES     := $(foreach dir,$(ULTRA_SRC_DIRS),$(wildcard $(dir)/*.c))
 GODDARD_C_FILES   := $(foreach dir,$(GODDARD_SRC_DIRS),$(wildcard $(dir)/*.c))
@@ -489,16 +519,23 @@ endif
 PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC
 
 # Compiler and linker flags for graphics backend
+GFX_LDFLAGS :=
+GFX_CFLAGS :=
 ifeq ($(ENABLE_OPENGL),1)
-  GFX_CFLAGS  := -DENABLE_OPENGL
-  GFX_LDFLAGS :=
+  GFX_CFLAGS += -DENABLE_OPENGL
   ifeq ($(TARGET_WINDOWS),1)
     GFX_CFLAGS  += $(shell sdl2-config --cflags) -DGLEW_STATIC
     GFX_LDFLAGS += $(shell sdl2-config --libs) -lglew32 -lopengl32 -lwinmm -limm32 -lversion -loleaut32 -lsetupapi
   endif
+  ifeq ($(ENABLE_WM_X11),1)
+    GFX_LDFLAGS += -lX11 -lXrandr
+  endif
   ifeq ($(TARGET_LINUX),1)
     GFX_CFLAGS  += $(shell sdl2-config --cflags)
-    GFX_LDFLAGS += -lGL $(shell sdl2-config --libs) -lX11 -lXrandr
+    GFX_LDFLAGS += -lGL $(shell sdl2-config --libs)
+  else ifeq ($(ENABLE_WM_SDL))
+    GFX_CFLAGS  += $(shell sdl2-config --cflags)
+    GFX_LDFLAGS += $(shell sdl2-config --libs)
   endif
   ifeq ($(TARGET_WEB),1)
     GFX_CFLAGS  += -s USE_SDL=2
@@ -506,11 +543,11 @@ ifeq ($(ENABLE_OPENGL),1)
   endif
 endif
 ifeq ($(ENABLE_DX11),1)
-  GFX_CFLAGS := -DENABLE_DX11
+  GFX_CFLAGS += -DENABLE_DX11
   PLATFORM_LDFLAGS += -lgdi32 -static
 endif
 ifeq ($(ENABLE_DX12),1)
-  GFX_CFLAGS := -DENABLE_DX12
+  GFX_CFLAGS += -DENABLE_DX12
   PLATFORM_LDFLAGS += -lgdi32 -static
 endif
 
@@ -654,7 +691,7 @@ else
   endif
 endif
 
-ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) rsp include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)
+ALL_DIRS := $(BUILD_DIR) $(addprefix $(BUILD_DIR)/,$(SRC_DIRS) $(PC_GFX_DIRS) $(GODDARD_SRC_DIRS) $(ULTRA_SRC_DIRS) $(ULTRA_BIN_DIRS) $(BIN_DIRS) $(TEXTURE_DIRS) $(TEXT_DIRS) $(SOUND_SAMPLE_DIRS) $(addprefix levels/,$(LEVEL_DIRS)) rsp include) $(MIO0_DIR) $(addprefix $(MIO0_DIR)/,$(VERSION)) $(SOUND_BIN_DIR) $(SOUND_BIN_DIR)/sequences/$(VERSION)
 
 # Make sure build directory exists before compiling anything
 DUMMY != mkdir -p $(ALL_DIRS)

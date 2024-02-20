@@ -1,6 +1,5 @@
 #include "../compat.h"
 
-#if defined(__linux__) || defined(__BSD__)
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -607,5 +606,3 @@ struct GfxWindowManagerAPI gfx_glx = {
     gfx_glx_swap_buffers_begin,
     gfx_glx_swap_buffers_end,
 };
-
-#endif

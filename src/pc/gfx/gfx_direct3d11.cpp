@@ -1,5 +1,3 @@
-#ifdef ENABLE_DX11
-
 #include <cstdio>
 #include <vector>
 #include <cmath>
@@ -727,5 +725,3 @@ struct GfxRenderingAPI gfx_direct3d11_api = {
     gfx_d3d11_end_frame,
     gfx_d3d11_finish_render
 };
-
-#endif
