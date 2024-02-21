@@ -4,7 +4,7 @@ Implementation of a Fast3D renderer for games built originally for the Nintendo 
 
 For rendering OpenGL, Direct3D 11 and Direct3D 12 are supported.
 
-Supported windowing systems are GLX (used on Linux), DXGI (used on Windows) and SDL (generic).
+Supported windowing systems are GLX (used on Unix-likes), Wayland (Unix-like) DXGI (used on Windows) and SDL (generic).
 
 # Usage
 

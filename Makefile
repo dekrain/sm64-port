@@ -59,12 +59,15 @@ ifeq ($(TARGET_N64),0)
     ENABLE_OPENGL ?= 1
     ifeq ($(TARGET_LINUX),1)
       ENABLE_WM_X11 ?= 1
+      ENABLE_WM_WAYLAND ?= 1
     endif
   endif
 
   ifeq ($(ENABLE_OPENGL),1)
     ifneq ($(ENABLE_WM_X11), 1)
-      ENABLE_WM_SDL ?= 1
+      ifneq ($(ENABLE_WM_WAYLAND), 1)
+        ENABLE_WM_SDL ?= 1
+      endif
     endif
   endif
 
@@ -329,6 +332,10 @@ else
   ifeq ($(ENABLE_WM_X11),1)
     PC_GFX_FILES += gfx_glx.c
   endif
+  ifeq ($(ENABLE_WM_WAYLAND),1)
+    PC_GFX_DIRS += src/pc/gfx/wayland
+    PC_GFX_FILES += gfx_wayland.c $(patsubst src/pc/gfx/%,%,$(wildcard src/pc/gfx/wayland/*.c))
+  endif
 endif
 BIN_DIRS := bin bin/$(VERSION)
 
@@ -529,6 +536,10 @@ ifeq ($(ENABLE_OPENGL),1)
   endif
   ifeq ($(ENABLE_WM_X11),1)
     GFX_LDFLAGS += -lX11 -lXrandr
+  endif
+  ifeq ($(ENABLE_WM_WAYLAND),1)
+    GFX_CFLAGS += -DENABLE_WM_WAYLAND
+    GFX_LDFLAGS += -lwayland-client -lwayland-egl -lEGL
   endif
   ifeq ($(TARGET_LINUX),1)
     GFX_CFLAGS  += $(shell sdl2-config --cflags)

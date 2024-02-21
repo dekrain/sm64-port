@@ -16,6 +16,7 @@
 #include "gfx/gfx_direct3d12.h"
 #include "gfx/gfx_dxgi.h"
 #include "gfx/gfx_glx.h"
+#include "gfx/gfx_wayland.h"
 #include "gfx/gfx_sdl.h"
 #include "gfx/gfx_dummy.h"
 
@@ -167,7 +168,11 @@ void main_func(void) {
 #elif defined(ENABLE_OPENGL)
     rendering_api = &gfx_opengl_api;
     #if defined(__linux__) || defined(__BSD__)
+        #if defined(ENABLE_WM_WAYLAND)
+        wm_api = &gfx_wayland;
+        #else
         wm_api = &gfx_glx;
+        #endif
     #else
         wm_api = &gfx_sdl;
     #endif
